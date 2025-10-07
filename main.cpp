@@ -4,14 +4,13 @@ using namespace std;
 
 int main()
 {
-    char resultado[5];
-    string teste = "teste";
-    string chave = "admin";
-    char temp;
+    string resultado;
+    string texto;
+    string chave;
 
-    int contadorChave = 0, contadorTeste = 0, tamTeste = teste.length();
+    int contadorChave = 0, contadorTexto = 0, tamTexto;
     int quadradoViginere[26][26];
-    int i, y;
+    int i, y, op;
 
     // nem eu sei que maracutaia eu fiz aqui que deu certo a implementacao do quadrado de viginere, tava usando 3 variaveis
     // fiquei pensando nisso e fazia sentido, agora nem eu sei como q cheguei nessa bomba
@@ -36,26 +35,72 @@ int main()
         cout<<endl;
     }
 
+    //ESPACAMENTO
+
     cout<<endl;
     cout<<endl;
     cout<<endl;
 
+    // PARTE QUE RODA / INTERATIVA
     do{
-        y = (chave[contadorChave] - 97);
-        i = (teste[contadorTeste] - 97);
+        cout<<"----------------------------------------------------------------------------"<<endl;
+        cout<<"1 - digitar a chave e a string para criptografar"<<endl;
+        cout<<"2 - enviar o caminho de um arquivo txt e uma chave"<<endl;
+        cout<<"3 - encerrar o programa"<<endl;
+        cout<<"digite a opcao desejada: "<<endl;
+        cin>>op;
+        getchar();
 
-        resultado[contadorTeste] = quadradoViginere[y][i] + 97;
+        switch(op){
+            case(3):{
+                break;
+            }
 
-        contadorChave++;
-        contadorTeste++;
+            case(1):{
 
-        if (contadorChave == 5){
-            contadorChave = 0;
+                cout<<"digite a chave: "<<endl;
+                getline(cin, chave);
+
+                cout<<"digite o texto: "<<endl;
+                getline(cin, texto);
+
+                resultado = texto;
+                tamTexto = texto.length();
+
+                do{
+                    y = (chave[contadorChave] - 97);
+                    i = (texto[contadorTexto] - 97);
+
+                    resultado[contadorTexto] = quadradoViginere[y][i] + 97;
+
+                    contadorChave++;
+                    contadorTexto++;
+
+                    if (contadorChave == 5){
+                        contadorChave = 0;
+                    }
+
+                }while(contadorTexto<tamTexto);
+
+                cout<<"\no resultado final foi: "<<resultado<<"\n"<<endl;
+                contadorTexto = 0;
+                contadorChave = 0;
+                break;
+
+            }
+
+            case(2):{
+
+                break;
+            }
+
+            default:{
+                cout<<"opcao invalida"<<endl;
+                break;
+            }
+
         }
-
-    }while(contadorTeste<tamTeste);
-
-    cout<<resultado<<endl;
+    }while(op!=3);
 
     return 0;
 }
