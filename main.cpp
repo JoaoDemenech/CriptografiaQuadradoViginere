@@ -184,6 +184,12 @@ int main()
     }
     */
 
+    // iniciar a pasta de saidas caso nao exista
+
+    if (!(fs::is_directory("arquivosSaida"))){
+        fs::create_directory("arquivosSaida");
+    }
+
     // PARTE QUE RODA / INTERATIVA
     do{
         cout<<"----------------------------------------------------------------------------"<<endl;
