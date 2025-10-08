@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -7,6 +9,11 @@ int main()
     string resultado;
     string texto;
     string chave;
+    string caminhoArquivo;
+    string linha;
+
+    ifstream arquivo;
+    ofstream arquivoSaida("saida.txt");
 
     int contadorChave = 0, contadorTexto = 0, tamTexto;
     int quadradoViginere[26][26];
@@ -64,19 +71,28 @@ int main()
                 cout<<"digite o texto: "<<endl;
                 getline(cin, texto);
 
-                resultado = texto;
                 tamTexto = texto.length();
 
+                // EXISTE PARA QUE O TAMANHO DO RESULTADO SEJA O MESMO QUE O DO TEXTO
+                resultado = texto;
+
+
                 do{
+
                     y = (chave[contadorChave] - 97);
                     i = (texto[contadorTexto] - 97);
 
-                    resultado[contadorTexto] = quadradoViginere[y][i] + 97;
+                    if (texto[contadorTexto] == 32){
+                        resultado[contadorTexto] = 32;
+                    }
+                    else{
+                        resultado[contadorTexto] = quadradoViginere[y][i] + 97;
+                        contadorChave++;
+                    }
 
-                    contadorChave++;
                     contadorTexto++;
 
-                    if (contadorChave == 5){
+                    if (contadorChave == chave.length()){
                         contadorChave = 0;
                     }
 
@@ -91,6 +107,71 @@ int main()
 
             case(2):{
 
+                cout<<"digite a chave que vai ser utilizada: "<<endl;
+                getline(cin, chave);
+
+                cout<<"digite o caminho completo do arquivo: "<<endl;
+                getline(cin, caminhoArquivo);
+
+                //--------------------------------------------------------------------
+                //ARQUIVO DE ENTRADA
+                arquivo.open(caminhoArquivo);
+
+                if (!arquivo.is_open()){
+                    cout<<"ERRO AO ABRIR O ARQUIVO"<<endl;
+                    break;
+                }
+                else{
+                    cout<<"ARQUIVO ENTRADA ABERTO COM SUCESSO"<<endl;
+                }
+
+                //ENTRADA DE SAIDA
+
+                if (!arquivoSaida.is_open()){
+                    cout<<"ERRO AO CRIAR O ARQUIVO DE SAIDA"<<endl;
+                    break;
+                }
+                else{
+                    cout<<"ARQUIVO SAIDA ABERTO COM SUCESSO"<<endl;
+                }
+
+                //--------------------------------------------------------------------
+
+                while(getline(arquivo, linha)){
+
+                    // vai trabalhar linha a linha, ou seja, vai imprimir na tela o resultado criptografado a cada linha
+
+                    texto = linha;
+                    tamTexto = texto.length();
+
+                    // EXISTE PARA QUE O TAMANHO DO RESULTADO SEJA O MESMO QUE O DO TEXTO
+                    resultado = texto;
+
+                    do{
+
+                        y = (chave[contadorChave] - 97);
+                        i = (texto[contadorTexto] - 97);
+
+                        if (texto[contadorTexto] == 32){
+                            resultado[contadorTexto] = 32;
+                        }
+                        else{
+                            resultado[contadorTexto] = quadradoViginere[y][i] + 97;
+                            contadorChave++;
+                        }
+
+                        contadorTexto++;
+
+                        if (contadorChave == chave.length()){
+                            contadorChave = 0;
+                        }
+
+                }while(contadorTexto<tamTexto);
+                    cout<<resultado<<endl;
+                    arquivoSaida << resultado << endl;
+                    contadorTexto = 0;
+                    contadorChave = 0;
+                }
                 break;
             }
 
@@ -101,6 +182,9 @@ int main()
 
         }
     }while(op!=3);
+
+    arquivo.close();
+    arquivoSaida.close();
 
     return 0;
 }
