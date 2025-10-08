@@ -2,8 +2,9 @@
 1759100993 source:c:\users\usuario\documents\programacao\tutoriais\criptografararquivos\main.cpp
 	<iostream>
 
-1759876030 source:c:\users\usuario\documents\programacao\projetos c++\criptografararquivos\main.cpp
+1759932187 source:c:\users\usuario\documents\programacao\projetos c++\criptografararquivos\main.cpp
 	<iostream>
 	<fstream>
 	<string>
+	<filesystem>
 
