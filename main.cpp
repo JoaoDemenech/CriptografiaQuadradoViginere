@@ -7,7 +7,9 @@
 namespace fs = std::filesystem;
 using namespace std;
 
-int textoDireto(int quadradoViginere[26][26]){
+// PARA COMPLETO ASCII 33 - 126
+
+int textoDireto(){
 
     string resultado;
     string texto;
@@ -32,17 +34,17 @@ int textoDireto(int quadradoViginere[26][26]){
 
     do{
 
-            y = (chave[contadorChave] - 97);
-            i = (texto[contadorTexto] - 97);
-
             if (texto[contadorTexto] == 32){
                 resultado[contadorTexto] = 32;
             }
+
             else{
-                resultado[contadorTexto] = quadradoViginere[y][i] + 97;
+                y = chave[contadorChave] - 33;
+                i = texto[contadorTexto] - 33;
+                resultado[contadorTexto] = ((i + y) % 95) + 33;
+
                 contadorChave++;
             }
-
             contadorTexto++;
 
             if (contadorChave == chave.length()){
@@ -52,12 +54,13 @@ int textoDireto(int quadradoViginere[26][26]){
         }while(contadorTexto<tamTexto);
 
         cout<<"\no resultado final foi: "<<resultado<<"\n"<<endl;
-        contadorTexto = 0;
-        contadorChave = 0;
+        cout<<"\ndigite qualquer coisa para continuar: "<<endl;
+        getline(cin, texto);
+
         return 1;
 }
 
-int textoArquivo(int quadradoViginere[26][26]){
+int textoArquivo(){
 
     string resultado;
     string texto;
@@ -81,9 +84,10 @@ int textoArquivo(int quadradoViginere[26][26]){
     getline(cin, caminhoArquivo);
 
     cout << "digite o nome do caminho de saida: " << endl;
-    getline(cin, nomeArquivoSaida);
+    getline(cin,nomeArquivoSaida);
+    nomeArquivoSaida = "arquivosCriptografados/"+nomeArquivoSaida;
 
-    ofstream arquivoSaida(nomeArquivoSaida);
+    ofstream arquivoSaida(nomeArquivoSaida+".txt");
 
     //------------------------------------------------------------------
     //ARQUIVO DE ENTRADA
@@ -119,32 +123,38 @@ int textoArquivo(int quadradoViginere[26][26]){
         // EXISTE PARA QUE O TAMANHO DO RESULTADO SEJA O MESMO QUE O DO TEXTO
         resultado = texto;
 
+
         do{
-
-            y = (chave[contadorChave] - 97);
-            i = (texto[contadorTexto] - 97);
-
-            if (texto[contadorTexto] == 32){
-                resultado[contadorTexto] = 32;
+            if (texto[contadorTexto] < 33 || texto[contadorTexto] > 126){
+                contadorTexto++;
             }
             else{
-                resultado[contadorTexto] = quadradoViginere[y][i] + 97;
-                contadorChave++;
+                y = chave[contadorChave] - 33;
+                i = texto[contadorTexto] - 33;
+
+                if (texto[contadorTexto] == 32){
+                    resultado[contadorTexto] = 32;
+                }
+                else{
+                    resultado[contadorTexto] = ((i + y) % 95) + 33;
+                    contadorChave++;
+                }
+
+                contadorTexto++;
+
+                if (contadorChave == chave.length()){
+                    contadorChave = 0;
+                }
             }
-
-            contadorTexto++;
-
-            if (contadorChave == chave.length()){
-                contadorChave = 0;
-            }
-
         }while(contadorTexto<tamTexto);
             cout<<resultado<<endl;
             arquivoSaida << resultado << endl;
             contadorTexto = 0;
         }
-        return 1;
 
+        cout<<"\ndigite qualquer coisa para continuar: "<<endl;
+        getline(cin, texto);
+        return 1;
 }
 
 string escolherArquivo(){
@@ -174,7 +184,7 @@ string escolherArquivo(){
     return (nomeArquivo);
 }
 
-int descriptografarArquivo(int quadradoViginere[26][26]){
+int descriptografarArquivo(){
 
     string nomeArquivo = "arquivosCriptografados/"+escolherArquivo();
     string linha;
@@ -183,7 +193,10 @@ int descriptografarArquivo(int quadradoViginere[26][26]){
     string chave;
 
     int tamTexto, contadorTexto = 0, contadorChave = 0;
-    int x, y = 0, z;
+    int i, y;
+
+    // y char chave
+    // i char criptografado
 
 
     ifstream arquivoCriptografado;
@@ -213,8 +226,6 @@ int descriptografarArquivo(int quadradoViginere[26][26]){
     // ====================================================================
     // PEGAR CHAVE
 
-    system("cls");
-
     cout<<"digite a chave do arquivo: "<<endl;
     getline(cin, chave);
 
@@ -225,72 +236,39 @@ int descriptografarArquivo(int quadradoViginere[26][26]){
         resultado = texto;
 
         do{
-            x = chave[contadorChave] - 97;
-            z = quadradoViginere[y][x];
-
-            if (texto[contadorTexto] == 32){
-                resultado[contadorTexto] = 32;
+            if (texto[contadorTexto] < 33 || texto[contadorTexto] > 126){
+                contadorTexto++;
             }
             else{
-                while(z != texto[contadorTexto] - 97){
-                    y++;
-                    z = quadradoViginere[y][x];
+                y = chave[contadorChave] - 33;
+                i = linha[contadorTexto] - 33;
+
+                if (texto[contadorTexto] == 32){
+                    resultado[contadorTexto] = 32;
                 }
-
-            resultado[contadorTexto] = y + 97;
-            contadorChave++;
+                else{
+                    resultado[contadorTexto] = ((i - y + 95) % 95) + 33;
+                    contadorChave++;
+                }
+                if (contadorChave == chave.length()){
+                    contadorChave = 0;
+                }
+                contadorTexto++;
             }
-
-            if (contadorChave == chave.length()){
-                contadorChave = 0;
-            }
-            contadorTexto++;
-            y = 0;
-
         }while(contadorTexto < tamTexto);
 
         arquivoDescriptografado << resultado << endl;
         contadorTexto = 0;
     }
 
+    cout<<"\ndigite qualquer coisa para continuar: "<<endl;
+    getline(cin, texto);
     return 1;
 }
 
 int main()
 {
-    int quadradoViginere[26][26];
-    int x, y, op;
-
-    // X - CHAVE
-    // Y - TEXTO
-
-    // nem eu sei que maracutaia eu fiz aqui que deu certo a implementacao do quadrado de viginere, tava usando 3 variaveis
-    // fiquei pensando nisso e fazia sentido, agora nem eu sei como q cheguei nessa bomba
-    // INICIA OS VALORES DO QUADRADO DE VIGINERE
-
-    for(y=0;y<26;y++){
-        for(x=0;x<26;x++){
-            if (x+y > 25){
-                quadradoViginere[y][x] = x-(26-y);
-            }
-            else{
-                quadradoViginere[y][x] = x + y;
-            }
-        }
-    }
-
-    //TESTE PRA SABER SE A COLOCACO DOS VALORES ESTA CORRETA
-
-    /*
-    for(y=0;y<26;y++){
-        for(x=0;x<26;x++){
-            cout<<quadradoViginere[y][x]<<" ";
-        }
-        cout<<endl;
-    }
-    */
-
-    // iniciar a pasta de saidas caso nao exista
+    int op;
 
     if (!(fs::is_directory("arquivosCriptografados"))){
         fs::create_directory("arquivosCriptografados");
@@ -315,16 +293,16 @@ int main()
             }
 
             case(1):{
-                textoDireto(quadradoViginere);
+                textoDireto();
                 break;
             }
 
             case(2):{
-                textoArquivo(quadradoViginere);
+                textoArquivo();
                 break;
             }
             case (4):{
-                descriptografarArquivo(quadradoViginere);
+                descriptografarArquivo();
                 break;
             }
             default:{
